@@ -1,4 +1,5 @@
-﻿using System;
+﻿#pragma warning disable S2589
+using System;
 using System.Collections.Generic;
 
 namespace EnumerableTask
@@ -17,8 +18,13 @@ namespace EnumerableTask
         /// </example>
         public IEnumerable<string> GetUppercaseStrings(IEnumerable<string>? data)
         {
-            // TODO : Implement GetUppercaseStrings
-            throw new NotImplementedException("You need to implement this function.");
+            if (data != null)
+            {
+                foreach (var item in data)
+                {
+                    yield return item is null ? item! : item.ToUpper(System.Globalization.CultureInfo.InvariantCulture);
+                }
+            }
         }
 
         /// <summary> Transforms an each string from sequence to its length.</summary>
@@ -33,8 +39,13 @@ namespace EnumerableTask
         /// </example>
         public IEnumerable<int> GetStringsLength(IEnumerable<string>? data)
         {
-            // TODO : Implement GetStringsLength
-            throw new NotImplementedException("You need to implement this function.");
+            if (data != null)
+            {
+                foreach (var item in data)
+                {
+                    yield return item is null ? 0 : item.Length;
+                }
+            }
         }
 
         /// <summary>Transforms integer sequence to its square sequence, f(x) = x * x. </summary>
@@ -49,8 +60,13 @@ namespace EnumerableTask
         /// </example>
         public IEnumerable<long> GetSquareSequence(IEnumerable<int>? data)
         {
-            // TODO : Implement GetSquareSequence
-            throw new NotImplementedException("You need to implement this function.");
+            if (data != null)
+            {
+                foreach (long item in data)
+                {
+                    yield return item * item;
+                }
+            }
         }
 
         /// <summary> Filters a string sequence by a prefix value (case insensitive).</summary>
@@ -70,8 +86,26 @@ namespace EnumerableTask
         /// </example>
         public IEnumerable<string> GetPrefixItems(IEnumerable<string>? data, string prefix)
         {
-            // TODO : Implement GetPrefixItems
-            throw new NotImplementedException("You need to implement this function.");
+            if (prefix == null)
+            {
+                throw new ArgumentNullException(nameof(prefix), "Can't be null.");
+            }
+
+            return GetPrefixItems();
+
+            IEnumerable<string> GetPrefixItems()
+            {
+                if (data != null)
+                {
+                    foreach (var item in data)
+                    {
+                        if (item != null && item.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+                        {
+                            yield return item;
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary> Finds the 3 largest numbers from a sequence.</summary>
@@ -88,8 +122,32 @@ namespace EnumerableTask
         /// </example>
         public IEnumerable<int> Get3LargestItems(IEnumerable<int>? data)
         {
-            // TODO : Implement Get3LargestItems
-            throw new NotImplementedException("You need to implement this function.");
+            var count = (int.MinValue, int.MinValue, int.MinValue);
+            foreach (var item in data!)
+            {
+                count = item switch
+                {
+                    int i when i > count.Item1 => (i, count.Item1, count.Item2),
+                    int i when i > count.Item2 => (count.Item1, i, count.Item2),
+                    int i when i > count.Item3 => (count.Item1, count.Item2, i),
+                    _ => count
+                };
+            }
+
+            if (count.Item1 != int.MinValue)
+            {
+                yield return count.Item1;
+            }
+
+            if (count.Item2 != int.MinValue)
+            {
+                yield return count.Item2;
+            }
+
+            if (count.Item3 != int.MinValue)
+            {
+                yield return count.Item3;
+            }
         }
 
         /// <summary> Calculates sum of all integers from object array.</summary>
@@ -105,8 +163,17 @@ namespace EnumerableTask
         /// </example>
         public int GetSumOfAllIntegers(object[] data)
         {
-            // TODO : Implement GetSumOfAllIntegers
-            throw new NotImplementedException("You need to implement this function.");
+            var sum = 0;
+            foreach (var item in data)
+            {
+                sum += item switch
+                {
+                    int i => i,
+                    _ => 0
+                };
+            }
+
+            return sum;
         }
     }
 }
